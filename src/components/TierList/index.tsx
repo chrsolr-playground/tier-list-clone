@@ -24,37 +24,32 @@ const TierList = ({ title = 'Tier List' }: { title?: string }) => {
   >()
   const [selectedItem, setSelectedItem] = useState<RowItem | undefined>()
 
-  const handleMoveUp = (id: string) => {
-    const currentIndex = rows.findIndex((v) => v.id === id)
+  const findRowIndexById = (rowId: string): number =>
+    rows.findIndex(({ id }) => id === rowId)
 
-    if (currentIndex === 0) {
+  const moveRow = (rowId: string, direction: 'UP' | 'DOWN') => {
+    const currentIndex = findRowIndexById(rowId)
+
+    if (
+      (direction === 'UP' && currentIndex === 0) ||
+      (direction === 'DOWN' && currentIndex === rows.length - 1)
+    ) {
       return
     }
 
-    const currentItem = rows[currentIndex]
-    const nextItem = rows[currentIndex - 1]
+    const currentRows = [...rows]
+    const moveToIndex = direction === 'UP' ? currentIndex - 1 : currentIndex + 1
+    const row = currentRows[currentIndex]
+    const nextRow = currentRows[moveToIndex]
 
-    rows[currentIndex] = nextItem
-    rows[currentIndex - 1] = currentItem
+    currentRows[currentIndex] = nextRow
+    currentRows[moveToIndex] = row
 
-    setRows([...rows])
+    setRows(currentRows)
   }
 
-  const handleMoveDown = (id: string) => {
-    const currentIndex = rows.findIndex((v) => v.id === id)
-
-    if (currentIndex === rows.length - 1) {
-      return
-    }
-
-    const currentItem = rows[currentIndex]
-    const nextItem = rows[currentIndex + 1]
-
-    rows[currentIndex] = nextItem
-    rows[currentIndex + 1] = currentItem
-
-    setRows([...rows])
-  }
+  const handleMoveUp = (id: string) => moveRow(id, 'UP')
+  const handleMoveDown = (id: string) => moveRow(id, 'DOWN')
 
   const handleOnItemClick = ({
     rowId,
