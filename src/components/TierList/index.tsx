@@ -5,6 +5,12 @@ import { type RowItem } from './TierListRowItem'
 import { rows as data, images } from '../../data/dataSet'
 import TierListHolder from './TierListHolder'
 
+export type TierListSelectItem = {
+  rowId: string
+  itemId: string
+  isSelected: boolean
+}
+
 /**
  * TODO:
  * - add row
@@ -62,11 +68,7 @@ const TierList = ({ title = 'Tier List' }: { title?: string }) => {
     rowId,
     itemId,
     isSelected,
-  }: {
-    rowId: string
-    itemId: string
-    isSelected: boolean
-  }) => {
+  }: TierListSelectItem) => {
     const currentRowIndex = findRowIndexById(rowId)
     const currentRowItemIndex = findRowItemIndexById(currentRowIndex, itemId)
     const currentRows = [...rows]
@@ -128,14 +130,7 @@ const TierList = ({ title = 'Tier List' }: { title?: string }) => {
     setSelectedRow(undefined)
   }
 
-  const onHolderItemClick = ({
-    itemId,
-    isSelected,
-  }: {
-    rowId: string
-    itemId: string
-    isSelected: boolean
-  }) => {
+  const onHolderItemClick = ({ itemId, isSelected }: TierListSelectItem) => {
     for (const value of holderItems) {
       value.isSelected = false
     }
@@ -153,14 +148,7 @@ const TierList = ({ title = 'Tier List' }: { title?: string }) => {
     setSelectedItem(selectedItem)
   }
 
-  const onRowItemRightClick = ({
-    rowId,
-    itemId,
-  }: {
-    rowId: string
-    itemId: string
-    isSelected: boolean
-  }) => {
+  const onRowItemRightClick = ({ rowId, itemId }: TierListSelectItem) => {
     const rowIndex = findRowIndexById(rowId)
     const rowItemIndex = findRowItemIndexById(rowIndex, itemId)
 

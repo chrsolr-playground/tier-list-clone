@@ -1,3 +1,4 @@
+import { TierListSelectItem } from '.'
 import TierListRowItem from './TierListRowItem'
 
 const TierListHolder = ({
@@ -7,19 +8,10 @@ const TierListHolder = ({
 }: {
   id: string
   items: { id: string; isSelected: boolean; imageUrl: string }[]
-  onItemClick: ({
-    rowId,
-    itemId,
-    isSelected,
-  }: {
-    rowId: string
-    itemId: string
-    isSelected: boolean
-  }) => void
+  onItemClick: ({ rowId, itemId, isSelected }: TierListSelectItem) => void
 }) => {
   return (
     <div className="flex rounded-md bg-slate-400 text-slate-50 mb-4 min-h-[10rem]">
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
       <div className="flex flex-1 flex-wrap">
         {items.map((item) => (
           <TierListRowItem

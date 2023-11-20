@@ -1,3 +1,4 @@
+import { TierListSelectItem } from '.'
 import TierListRowHead from './TierListRowHead'
 import TierListRowItem, { type RowItem } from './TierListRowItem'
 import TierListRowTail from './TierListRowTail'
@@ -24,24 +25,8 @@ const RowContainer = ({
   onRowClick: (id: string) => void
   onUpClick: (id: string) => void
   onDownClick: (id: string) => void
-  onItemClick: ({
-    rowId,
-    itemId,
-    isSelected,
-  }: {
-    rowId: string
-    itemId: string
-    isSelected: boolean
-  }) => void
-  onRightClick: ({
-    rowId,
-    itemId,
-    isSelected,
-  }: {
-    rowId: string
-    itemId: string
-    isSelected: boolean
-  }) => void
+  onItemClick: ({ rowId, itemId, isSelected }: TierListSelectItem) => void
+  onRightClick: ({ rowId, itemId, isSelected }: TierListSelectItem) => void
 }) => {
   return (
     <div className="flex bg-slate-600 text-slate-50 mb-4 rounded-md min-h-[10rem]">

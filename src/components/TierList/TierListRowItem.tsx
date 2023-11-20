@@ -1,3 +1,5 @@
+import { TierListSelectItem } from '.'
+
 export type RowItem = {
   id: string
   isSelected: boolean
@@ -18,24 +20,8 @@ const TierListRowItem = ({
   imageUrl: string
   isSelected?: boolean
   margin?: string
-  onClick: ({
-    rowId,
-    itemId,
-    isSelected,
-  }: {
-    rowId: string
-    itemId: string
-    isSelected: boolean
-  }) => void
-  onRightClick?: ({
-    rowId,
-    itemId,
-    isSelected,
-  }: {
-    rowId: string
-    itemId: string
-    isSelected: boolean
-  }) => void
+  onClick: ({ rowId, itemId, isSelected }: TierListSelectItem) => void
+  onRightClick?: ({ rowId, itemId, isSelected }: TierListSelectItem) => void
 }) => {
   return (
     <div
