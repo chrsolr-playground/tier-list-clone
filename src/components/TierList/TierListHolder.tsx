@@ -1,6 +1,6 @@
-import RowItem from './RowItem'
+import TierListRowItem from './TierListRowItem'
 
-const RowUnusedContainer = ({
+const TierListHolder = ({
   id,
   items,
   onItemClick,
@@ -22,7 +22,7 @@ const RowUnusedContainer = ({
       {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
       <div className="flex flex-1 flex-wrap">
         {items.map((item) => (
-          <RowItem
+          <TierListRowItem
             key={item.id}
             id={item.id}
             rowId={id}
@@ -37,4 +37,4 @@ const RowUnusedContainer = ({
   )
 }
 
-export default RowUnusedContainer
+export default TierListHolder

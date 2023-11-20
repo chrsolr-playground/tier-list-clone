@@ -1,4 +1,4 @@
-const RowSetting = ({
+const TierListRowSetting = ({
   id,
   onUpClick: onUpClicked,
   onDownClick: onDownClicked,
@@ -27,4 +27,4 @@ const RowSetting = ({
   )
 }
 
-export default RowSetting
+export default TierListRowSetting

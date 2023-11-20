@@ -1,8 +1,8 @@
-import TierList from './components/TierList'
+import TierList from './components/TierList/'
 
 function App() {
   return (
-    <main className="antialiased font-mono text-base box-border">
+    <main className="antialiased font-sans text-base box-border">
       <TierList />
     </main>
   )

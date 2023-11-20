@@ -1,4 +1,10 @@
-const RowItem = ({
+export type RowItem = {
+  id: string
+  isSelected: boolean
+  imageUrl: string
+}
+
+const TierListRowItem = ({
   imageUrl,
   id,
   rowId,
@@ -32,7 +38,6 @@ const RowItem = ({
   }) => void
 }) => {
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
     <div
       className={`flex justify-center items-center overflow-hidden relative w-36 h-36 hover:cursor-pointer rounded-md ${margin}`}
       onClick={(e) => {
@@ -59,4 +64,4 @@ const RowItem = ({
   )
 }
 
-export default RowItem
+export default TierListRowItem

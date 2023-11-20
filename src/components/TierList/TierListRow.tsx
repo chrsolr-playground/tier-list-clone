@@ -1,6 +1,12 @@
-import RowHead from './RowHead'
-import RowItem from './RowItem'
-import RowSetting from './RowSetting'
+import TierListRowHead from './TierListRowHead'
+import TierListRowItem, { type RowItem } from './TierListRowItem'
+import TierListRowTail from './TierListRowTail'
+
+export type Row = {
+  id: string
+  title: string
+  items: RowItem[]
+}
 
 const RowContainer = ({
   id,
@@ -39,12 +45,11 @@ const RowContainer = ({
 }) => {
   return (
     <div className="flex bg-slate-600 text-slate-50 mb-4 rounded-md min-h-[10rem]">
-      <RowHead title={title} />
+      <TierListRowHead title={title} />
 
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
       <div className="flex flex-1 flex-wrap" onClick={() => onRowClick(id)}>
         {items.map((item) => (
-          <RowItem
+          <TierListRowItem
             key={item.id}
             id={item.id}
             rowId={id}
@@ -56,7 +61,11 @@ const RowContainer = ({
         ))}
       </div>
 
-      <RowSetting id={id} onUpClick={onUpClick} onDownClick={onDownClick} />
+      <TierListRowTail
+        id={id}
+        onUpClick={onUpClick}
+        onDownClick={onDownClick}
+      />
     </div>
   )
 }
