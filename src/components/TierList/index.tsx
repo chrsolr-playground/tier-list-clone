@@ -18,14 +18,21 @@ import TierListHolder from './TierListHolder'
 
 const TierList = ({ title = 'Tier List' }: { title?: string }) => {
   const [rows, setRows] = useState<Row[]>(data)
-  const [items, setItems] = useState<RowItem[]>(images)
+  const [holderItems, setHolderItems] = useState<RowItem[]>(images)
   const [selectedRow, setSelectedRow] = useState<
     { rowIndex: number; itemIndex: number; item: RowItem } | undefined
   >()
   const [selectedItem, setSelectedItem] = useState<RowItem | undefined>()
 
+  const removeItemFromRow = (rowIndex: number, rowItemIndex: number) =>
+    rows[rowIndex].items.splice(rowItemIndex, 1)
+
   const findRowIndexById = (rowId: string): number =>
     rows.findIndex(({ id }) => id === rowId)
+
+  const findRowItemIndexById = (rowIndex: number, itemId: string): number => {
+    return rows[rowIndex].items.findIndex(({ id }) => id === itemId)
+  }
 
   const moveRow = (rowId: string, direction: 'UP' | 'DOWN') => {
     const currentIndex = findRowIndexById(rowId)
@@ -51,7 +58,7 @@ const TierList = ({ title = 'Tier List' }: { title?: string }) => {
   const handleMoveUp = (id: string) => moveRow(id, 'UP')
   const handleMoveDown = (id: string) => moveRow(id, 'DOWN')
 
-  const handleOnItemClick = ({
+  const onRowItemClick = ({
     rowId,
     itemId,
     isSelected,
@@ -60,62 +67,68 @@ const TierList = ({ title = 'Tier List' }: { title?: string }) => {
     itemId: string
     isSelected: boolean
   }) => {
-    const currentRowIndex = rows.findIndex((v) => v.id === rowId) as number
-    const currentItemIndex = rows[currentRowIndex].items.findIndex(
-      (v) => v.id === itemId,
-    ) as number
+    const currentRowIndex = findRowIndexById(rowId)
+    const currentRowItemIndex = findRowItemIndexById(currentRowIndex, itemId)
+    const currentRows = [...rows]
+    let currentSelectedRow = undefined
+
+    let currentSelectedItem =
+      currentRows[currentRowIndex].items[currentRowItemIndex]
 
     if (!selectedRow) {
-      rows[currentRowIndex].items[currentItemIndex].isSelected = isSelected
-      const currentSelectedItem = rows[currentRowIndex].items[currentItemIndex]
-
-      setSelectedRow({
+      currentSelectedItem.isSelected = isSelected
+      currentSelectedRow = {
         item: currentSelectedItem,
         rowIndex: currentRowIndex,
-        itemIndex: currentItemIndex,
-      })
+        itemIndex: currentRowItemIndex,
+      }
     } else {
-      const currentItem = rows[currentRowIndex].items[currentItemIndex]
-
       selectedRow.item.isSelected = false
-      rows[currentRowIndex].items[currentItemIndex] = selectedRow.item
-      rows[selectedRow.rowIndex].items[selectedRow.itemIndex] = currentItem
-
-      setSelectedRow(undefined)
+      currentRows[currentRowIndex].items[currentRowItemIndex] = selectedRow.item
+      currentRows[selectedRow.rowIndex].items[selectedRow.itemIndex] =
+        currentSelectedItem
     }
+
+    setSelectedRow(currentSelectedRow)
+    setRows(currentRows)
   }
 
-  const handleOnRowClick = (id: string) => {
-    if (!selectedRow) {
-      if (selectedItem) {
-        const currentRowIndex = rows.findIndex((v) => v.id === id) as number
-        const selectedItemIndex = items.findIndex(
-          (v) => v.id === selectedItem.id,
-        )
+  const onRowClick = (id: string) => {
+    const currentRows = [...rows]
+    const currentRowIndex = findRowIndexById(id)
 
-        selectedItem.isSelected = false
-        rows[currentRowIndex].items.push(selectedItem)
+    if (!selectedRow && selectedItem) {
+      const currentRowIndex = rows.findIndex((v) => v.id === id) as number
+      const selectedItemIndex = holderItems.findIndex(
+        (v) => v.id === selectedItem.id,
+      )
 
-        items.splice(selectedItemIndex, 1)
+      selectedItem.isSelected = false
+      currentRows[currentRowIndex].items.push(selectedItem)
 
-        setRows([...rows])
-        setSelectedItem(undefined)
-      }
+      holderItems.splice(selectedItemIndex, 1)
+
+      setRows(currentRows)
+      setSelectedItem(undefined)
+
       return
     }
 
-    const currentRowIndex = rows.findIndex((v) => v.id === id) as number
+    if ((!selectedRow && !selectedItem) || !selectedRow) {
+      return
+    }
 
     selectedRow.item.isSelected = false
-    rows[currentRowIndex].items.push(selectedRow.item)
 
-    rows[selectedRow.rowIndex].items.splice(selectedRow.itemIndex, 1)
+    currentRows[currentRowIndex].items.push(selectedRow.item)
 
-    setRows([...rows])
+    removeItemFromRow(currentRowIndex, selectedRow.itemIndex)
+
+    setRows(currentRows)
     setSelectedRow(undefined)
   }
 
-  const handleOnUnusedItemClick = ({
+  const onHolderItemClick = ({
     itemId,
     isSelected,
   }: {
@@ -123,23 +136,24 @@ const TierList = ({ title = 'Tier List' }: { title?: string }) => {
     itemId: string
     isSelected: boolean
   }) => {
-    const selectedItemIndex = items.findIndex((v) => v.id === itemId)
-
-    unselectEverything()
-
-    items[selectedItemIndex].isSelected = isSelected
-
-    setItems([...items])
-    setSelectedItem(items[selectedItemIndex])
-  }
-
-  const unselectEverything = () => {
-    for (const value of items) {
+    for (const value of holderItems) {
       value.isSelected = false
     }
+
+    const selectedHolderItemIndex = holderItems.findIndex(
+      (v) => v.id === itemId,
+    )
+
+    const selectedItem = holderItems[selectedHolderItemIndex]
+    const currentItems = [...holderItems]
+
+    currentItems[selectedHolderItemIndex].isSelected = isSelected
+
+    setHolderItems(currentItems)
+    setSelectedItem(selectedItem)
   }
 
-  const handleOnRightClick = ({
+  const onRowItemRightClick = ({
     rowId,
     itemId,
   }: {
@@ -147,19 +161,18 @@ const TierList = ({ title = 'Tier List' }: { title?: string }) => {
     itemId: string
     isSelected: boolean
   }) => {
-    const currentRowIndex = rows.findIndex((v) => v.id === rowId) as number
-    const currentItemIndex = rows[currentRowIndex].items.findIndex(
-      (v) => v.id === itemId,
-    ) as number
+    const rowIndex = findRowIndexById(rowId)
+    const rowItemIndex = findRowItemIndexById(rowIndex, itemId)
 
-    const currentSelectedItem = rows[currentRowIndex].items[currentItemIndex]
+    const currentRows = [...rows]
+    const rowItemToRemove = currentRows[rowIndex].items[rowItemIndex]
 
-    rows[currentRowIndex].items.splice(currentItemIndex, 1)
+    removeItemFromRow(rowIndex, rowItemIndex)
 
-    items.push(currentSelectedItem)
+    holderItems.push(rowItemToRemove)
 
-    setRows([...rows])
-    setItems([...items])
+    setRows(currentRows)
+    setHolderItems(holderItems)
   }
 
   return (
@@ -172,18 +185,18 @@ const TierList = ({ title = 'Tier List' }: { title?: string }) => {
             id={item.id}
             title={item.title}
             items={item.items}
-            onRowClick={handleOnRowClick}
-            onItemClick={handleOnItemClick}
+            onRowClick={onRowClick}
+            onItemClick={onRowItemClick}
             onUpClick={handleMoveUp}
             onDownClick={handleMoveDown}
-            onRightClick={handleOnRightClick}
+            onRightClick={onRowItemRightClick}
           />
         ))}
         <TierListHolder
           key={getUniqueKey()}
           id="UNUSED"
-          items={items}
-          onItemClick={handleOnUnusedItemClick}
+          items={holderItems}
+          onItemClick={onHolderItemClick}
         />
       </div>
     </div>
