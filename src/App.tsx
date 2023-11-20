@@ -1,5 +1,4 @@
 import TierList from './components/TierList'
-import TierListRow from './components/TierListRow'
 
 function App() {
   return (
