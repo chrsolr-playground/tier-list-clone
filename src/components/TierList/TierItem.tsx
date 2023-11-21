@@ -10,6 +10,7 @@ const TierItem = ({ item, onDragStart }: Props) => {
     <div
       className="flex justify-center items-center overflow-hidden relative w-36 h-36 cursor-grab rounded-md mx-1 my-2"
       onDragStart={(e) => onDragStart(e, item.id)}
+      draggable
     >
       <div
         className="w-full h-full bg-center border-slate-900 border-2 bg-cover rounded-md"
